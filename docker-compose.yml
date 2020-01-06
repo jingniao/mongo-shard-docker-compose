@@ -2,46 +2,11 @@ version: '2'
 services:
 
   ## Config Servers
-  config01:
-    image: mongo
-    container_name: config01
-    command: mongod --port 27017 --configsvr --replSet configserver  --oplogSize 16
-    volumes:
-      - ./scripts:/scripts
+  walletredis:
+    image: redis:4.0
 
-  ## Shards
-  shard01a:
-    image: mongo
-    container_name: shard01a
-    command: mongod --port 27018 --shardsvr --replSet shard01  --oplogSize 16
-    volumes:
-      - ./scripts:/scripts
-
-  shard02a:
-    image: mongo
-    container_name: shard02a
-    command: mongod --port 27019 --shardsvr --replSet shard02 --oplogSize 16
-    volumes:
-      - ./scripts:/scripts
-
-  shard03a:
-    image: mongo
-    container_name: shard03a
-    command: mongod --port 27020 --shardsvr --replSet shard03  --oplogSize 16
-    volumes:
-      - ./scripts:/scripts
-
-  ## Router
-  router:
-    image: mongo
+  mongodb:
+    image: mongo:4.0.9
     container_name: router
-    command: mongos --port 27017 --configdb configserver/config01:27017 --bind_ip_all
     ports:
-      - "47017:27017"
-    volumes:
-      - ./scripts:/scripts
-    depends_on:
-      - config01
-      - shard01a
-      - shard02a
-      - shard03a
+      - "127.0.0.1:27017:27017"
